@@ -7,27 +7,18 @@ export const STALE_DAYS = 30;
 
 /**
  * Return in-progress courses for a learner, sorted by last activity (most recent first).
- *
- * TODO — implement this function to pass `tests/progress.api.test.ts`:
- * - Return 404 via NotFoundError when the learner does not exist in seed data
- * - Include only enrollments with status `in_progress` (exclude completed / not_started)
- * - Compute completionPercentage from completed lessons / total lessons (0–100, rounded)
- * - Map lastActivityAt through to the response
- * - Set isStale: true when last activity is older than STALE_DAYS
- * - Sort by lastActivityAt descending
- *
- * Helper functions below are provided — use, extend, or replace them.
+ * Throws NotFoundError when the learner does not exist in seed data.
  */
-export function getInProgressCourses(learnerId: number): CourseProgress[] {
+export function getInProgressCourses(learnerId: number, now: Date = new Date()): CourseProgress[] {
   if (!knownLearnerIds.has(learnerId)) {
     throw new NotFoundError(`Learner ${learnerId} not found`);
   }
 
-  // Baseline stub: returns all enrollments for the learner without filtering or
-  // proper mapping. Replace with your implementation.
+  // filter() returns a new array, so sorting it leaves the seed untouched.
   return enrollments
-    .filter((enrollment) => enrollment.learnerId === learnerId)
-    .map(toCourseProgressStub);
+    .filter((enrollment) => enrollment.learnerId === learnerId && enrollment.status === 'in_progress')
+    .map((enrollment) => toCourseProgress(enrollment, now))
+    .sort((a, b) => Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt));
 }
 
 export function computeCompletionPercentage(enrollment: CourseEnrollment): number {
@@ -45,13 +36,13 @@ export function isEnrollmentStale(lastActivityAt: string, now: Date = new Date()
   return diffDays > STALE_DAYS;
 }
 
-/** Temporary mapper — intentionally incomplete (wrong status, no stale flag). */
-function toCourseProgressStub(enrollment: CourseEnrollment): CourseProgress {
+function toCourseProgress(enrollment: CourseEnrollment, now: Date): CourseProgress {
   return {
     courseId: enrollment.courseId,
     title: enrollment.title,
     completionPercentage: computeCompletionPercentage(enrollment),
     lastActivityAt: enrollment.lastActivityAt,
     status: 'in_progress',
+    isStale: isEnrollmentStale(enrollment.lastActivityAt, now),
   };
 }
