@@ -33,8 +33,9 @@ function parseLearnerId(raw: string | string[]): number {
   if (value === undefined) {
     throw new ValidationError('Invalid learner ID: missing');
   }
+  // Canonical digits only: Number() alone would accept "1.0", "1e0", "0x1" and " 1".
   const learnerId = Number(value);
-  if (!Number.isInteger(learnerId) || learnerId <= 0) {
+  if (!/^[1-9]\d*$/.test(value) || !Number.isSafeInteger(learnerId)) {
     throw new ValidationError(`Invalid learner ID: ${value}`);
   }
   return learnerId;
