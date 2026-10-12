@@ -12,6 +12,10 @@ function daysAgo(days: number): string {
   return date.toISOString();
 }
 
+function daysFromNow(days: number): string {
+  return daysAgo(-days);
+}
+
 export const enrollments: CourseEnrollment[] = [
   {
     courseId: 'course-onboarding',
@@ -25,6 +29,8 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(4),
     status: 'in_progress',
+    enrolledAt: daysAgo(20),
+    dueAt: daysFromNow(20),
   },
   {
     courseId: 'course-leadership',
@@ -37,6 +43,7 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(2),
     status: 'in_progress',
+    enrolledAt: daysAgo(15),
   },
   {
     courseId: 'course-compliance',
@@ -48,6 +55,8 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(54), // always > STALE_DAYS (30)
     status: 'in_progress',
+    enrolledAt: daysAgo(90),
+    dueAt: daysAgo(10),
   },
   {
     courseId: 'course-completed-sample',
@@ -59,6 +68,7 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(84),
     status: 'completed',
+    enrolledAt: daysAgo(120),
   },
   {
     courseId: 'course-not-started',
@@ -69,6 +79,7 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(23),
     status: 'not_started',
+    enrolledAt: daysAgo(30),
   },
   {
     courseId: 'course-safety',
@@ -80,6 +91,8 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(3),
     status: 'in_progress',
+    enrolledAt: daysAgo(10),
+    dueAt: daysFromNow(30),
   },
   {
     courseId: 'course-privacy',
@@ -91,6 +104,20 @@ export const enrollments: CourseEnrollment[] = [
     ],
     lastActivityAt: daysAgo(106),
     status: 'completed',
+    enrolledAt: daysAgo(150),
+  },
+  {
+    // Learner 3 is known but has nothing in progress (empty-state fixture).
+    courseId: 'course-ethics',
+    title: 'Business Ethics',
+    learnerId: 3,
+    lessons: [
+      { id: 'l1', title: 'Conflicts of interest', completed: true },
+      { id: 'l2', title: 'Speaking up', completed: true },
+    ],
+    lastActivityAt: daysAgo(40),
+    status: 'completed',
+    enrolledAt: daysAgo(70),
   },
 ];
 

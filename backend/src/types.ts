@@ -16,6 +16,10 @@ export interface CourseEnrollment {
   /** ISO-8601 timestamp of last learner activity on this course */
   lastActivityAt: string;
   status: EnrollmentStatus;
+  /** ISO-8601 UTC timestamp of when the learner enrolled */
+  enrolledAt: string;
+  /** ISO-8601 UTC due date, if the course has one */
+  dueAt?: string;
 }
 
 /** API response shape for a single in-progress course. */
