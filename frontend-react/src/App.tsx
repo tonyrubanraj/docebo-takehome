@@ -1,17 +1,44 @@
+import { useState } from 'react';
 import type { CourseProgress } from './types';
 import { useLearnerProgress } from './useLearnerProgress';
 
-const LEARNER_ID = '1';
+// Demo learners, each showing a different state of the page.
+const LEARNER_OPTIONS = [
+  { value: '1', label: 'Learner 1: mixed progress' },
+  { value: '2', label: 'Learner 2: ahead of pace' },
+  { value: '3', label: 'Learner 3: nothing in progress (empty state)' },
+  { value: '999', label: 'Learner 999: unknown learner (404)' },
+  { value: 'abc', label: 'Learner abc: invalid ID (400)' },
+];
 const SKELETON_COUNT = 3;
 
 export function App() {
-  const { data, error, loading, refetch } = useLearnerProgress(LEARNER_ID);
+  const [learnerId, setLearnerId] = useState('1');
+  const { data, error, loading, refetch } = useLearnerProgress(learnerId);
 
   return (
     <main className="page">
       <p className="eyebrow">Docebo · pilot</p>
       <h1>My progress</h1>
-      <p className="lede">In-progress courses for learner {LEARNER_ID}.</p>
+      <p className="lede">In-progress courses for learner {learnerId}.</p>
+      <div className="picker">
+        <label htmlFor="learner-picker">Learner</label>
+        <select
+          id="learner-picker"
+          value={learnerId}
+          onChange={(event) => setLearnerId(event.target.value)}
+          aria-describedby="learner-picker-hint"
+        >
+          {LEARNER_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <p id="learner-picker-hint" className="meta">
+          Stand-in for a signed-in user; sent as x-authenticated-learner-id.
+        </p>
+      </div>
       {loading ? (
         <SkeletonList />
       ) : error ? (

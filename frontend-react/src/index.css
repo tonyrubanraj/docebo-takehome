@@ -124,3 +124,25 @@ h1 {
   color: #c2410c;
   cursor: pointer;
 }
+
+.picker {
+  margin-bottom: 1.25rem;
+}
+
+.picker label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.picker select {
+  font: inherit;
+  max-width: 100%;
+  padding: 0.35rem 0.5rem;
+  margin-bottom: 0.35rem;
+  border: 1px solid #e7e0d8;
+  border-radius: 6px;
+  background: #fffcf8;
+  color: inherit;
+}
