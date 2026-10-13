@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CourseCard } from './CourseCard';
 import type { CourseProgress } from './types';
 import { useLearnerProgress } from './useLearnerProgress';
 
@@ -18,8 +19,15 @@ export function App() {
 
   return (
     <main className="page">
-      <p className="eyebrow">Docebo · pilot</p>
-      <h1>My progress</h1>
+      <header className="page-header">
+        <div>
+          <p className="eyebrow">Docebo · pilot</p>
+          <h1>My progress</h1>
+        </div>
+        <button type="button" onClick={refetch} disabled={loading}>
+          Refresh
+        </button>
+      </header>
       <p className="lede">In-progress courses for learner {learnerId}.</p>
       <div className="picker">
         <label htmlFor="learner-picker">Learner</label>
@@ -77,12 +85,8 @@ function CourseList({ courses }: { courses: CourseProgress[] }) {
   return (
     <ul className="course-list">
       {courses.map((course) => (
-        <li key={course.courseId} className="course">
-          <h2>{course.title}</h2>
-          <p className="meta">
-            {course.completionPercentage}% · {course.lastActivityAt}
-          </p>
-          {course.isStale ? <span className="badge">Inactive</span> : null}
+        <li key={course.courseId}>
+          <CourseCard course={course} />
         </li>
       ))}
     </ul>

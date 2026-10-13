@@ -5,7 +5,7 @@ export type CourseProgress = {
   title: string;
   completionPercentage: number;
   lastActivityAt: string;
-  status: string;
+  status: 'in_progress';
   isStale?: boolean;
   dueAt: string | null;
   pace: Pace;

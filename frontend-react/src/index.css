@@ -115,7 +115,8 @@ h1 {
   font-weight: 650;
 }
 
-.notice button {
+.notice button,
+.page-header button {
   font: inherit;
   padding: 0.4rem 0.9rem;
   border: 1px solid #c2410c;
@@ -123,6 +124,11 @@ h1 {
   background: #fff;
   color: #c2410c;
   cursor: pointer;
+}
+
+.page-header button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .picker {
@@ -145,4 +151,56 @@ h1 {
   border-radius: 6px;
   background: #fffcf8;
   color: inherit;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
+}
+
+.progress {
+  flex: 1;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #ece6df;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #c2410c;
+}
+
+.progress-value {
+  min-width: 2.5rem;
+  text-align: right;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.badge-pace-ahead {
+  color: #15803d;
+}
+
+.badge-pace-on_track {
+  color: #57534e;
+}
+
+.badge-pace-behind {
+  color: #b91c1c;
 }
