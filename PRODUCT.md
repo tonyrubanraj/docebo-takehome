@@ -83,6 +83,6 @@ Learners enrolled in several courses at once lose track of where they left off. 
 
 ## What I'd build next
 
-- **Holdout experiment:** add a page-level flag with a holdout group, so the 7-day resume rate can be measured as defined.
+- **Make the learner picker labels follow the pace flag**, so no pace details show when it's off.
 - **Behind-first ordering and a pace filter in the UI.** Add a `course_selected` event to see which courses learners open.
-- **Frontend tests:** Vitest and Testing Library for the hook and the four page states.
+- **Holdout experiment:** add a page-level flag with a holdout group, so the 7-day resume rate can be measured as defined.

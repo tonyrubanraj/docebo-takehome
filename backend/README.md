@@ -78,7 +78,7 @@ A learner who exists but has nothing in progress gets `200` with `"courses": []`
 - `src/routes/progressRoutes.ts` validates the learner ID and calls the service.
 - `src/services/progressService.ts` filters to `in_progress`, computes completion, `isStale` and `pace`, and sorts by `lastActivityAt` descending. `computePace` is a pure function; the current time is passed in so tests control it.
 - `src/data/seed.ts` is the in-memory store.
-- The `x-authenticated-learner-id` header is read into `req.authenticatedLearnerId` but not yet enforced; the commented `ForbiddenError` check in the route shows where it would go.
+- The `x-authenticated-learner-id` header is read into `req.authenticatedLearnerId` but deliberately not enforced, as the brief intends; the commented `ForbiddenError` check in the route shows where it would go.
 
 ## Tests
 

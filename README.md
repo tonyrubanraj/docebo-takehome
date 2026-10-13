@@ -65,6 +65,6 @@ The frontend has no test runner; `npm run build` in `frontend-react/` is the typ
 
 ## Known limitations
 
-- **Auth is a stub.** The UI sends the picked ID as `x-authenticated-learner-id`; the API does not yet check it against the URL (see `PRODUCT.md`).
-- **Data is in-memory seed data.** Dates are relative to server start, so the demo always looks the same.
-- **No frontend automated tests or CI.** The UI was checked manually in the browser.
+- **Auth is a stub.** A learner picker sends the ID in `x-authenticated-learner-id`, but the API doesn't check it against the URL, as the brief intends (see `PRODUCT.md`).
+- **Data is the in-memory seed data.** Dates are relative to server start, so the demo always looks the same.
+- **The pace flag doesn't reach the picker.** `VITE_FLAG_PACE=false` hides the Ahead / On track / Behind badges, but the learner picker still labels learner 2 as "ahead of pace".

@@ -15,7 +15,7 @@ npm run dev
 
 Open the URL Vite prints (http://localhost:5173).
 
-Run with `VITE_FLAG_PACE=false npm run dev` to hide the pace badge.
+Run with `VITE_FLAG_PACE=false npm run dev` to hide the pace badge. The learner picker labels don't follow the flag, so learner 2 is still labelled "ahead of pace".
 
 `npm run build` typechecks and builds. There is no frontend test runner.
 
