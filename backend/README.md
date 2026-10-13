@@ -57,7 +57,7 @@ Returns in-progress courses for a learner.
 
 | Status | When |
 |--------|------|
-| 400 | Invalid learner ID (non-integer or ≤ 0) |
+| 400 | Invalid learner ID: not a positive integer in plain digits (no leading zeros, decimals, exponents, hex or whitespace) or above `Number.MAX_SAFE_INTEGER` |
 | 404 | Unknown learner (not in seed data) |
 
 ## Your task
