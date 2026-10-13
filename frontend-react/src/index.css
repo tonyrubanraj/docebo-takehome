@@ -66,3 +66,61 @@ h1 {
   letter-spacing: 0.04em;
   color: #a16207;
 }
+
+.skeleton {
+  border-radius: 4px;
+  background: #ece6df;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeleton-title {
+  width: 55%;
+  height: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-meta {
+  width: 35%;
+  height: 0.85rem;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.notice {
+  background: #fffcf8;
+  border: 1px solid #e7e0d8;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+
+.notice p {
+  margin: 0 0 0.75rem;
+}
+
+.notice p:last-child {
+  margin-bottom: 0;
+}
+
+.notice-title {
+  font-weight: 650;
+}
+
+.notice button {
+  font: inherit;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #c2410c;
+  border-radius: 6px;
+  background: #fff;
+  color: #c2410c;
+  cursor: pointer;
+}
