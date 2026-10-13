@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { track } from './analytics';
 import type { LearnerProgressResponse } from './types';
 
 const UNREACHABLE_MESSAGE = "Can't reach the progress service. Is the backend running?";
@@ -43,7 +44,17 @@ export function useLearnerProgress(learnerId: string): LearnerProgressState {
         fail(errorMessageFrom(body, res.status));
         return;
       }
-      setData(body as LearnerProgressResponse);
+      const progress = body as LearnerProgressResponse;
+      // Fired here, after the abort check, so only the request that wins is
+      // counted: StrictMode's discarded first mount and superseded requests
+      // are aborted and return above.
+      track('course_progress_viewed', {
+        learnerId,
+        courseCount: progress.courses.length,
+        behindCount: progress.courses.filter((course) => course.pace === 'behind').length,
+        staleCount: progress.courses.filter((course) => course.isStale).length,
+      });
+      setData(progress);
       setLoading(false);
     }
 

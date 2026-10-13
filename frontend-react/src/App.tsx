@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { track } from './analytics';
 import { CourseCard } from './CourseCard';
 import type { CourseProgress } from './types';
 import { useLearnerProgress } from './useLearnerProgress';
@@ -17,6 +18,11 @@ export function App() {
   const [learnerId, setLearnerId] = useState('1');
   const { data, error, loading, refetch } = useLearnerProgress(learnerId);
 
+  const refresh = (source: 'refresh' | 'retry') => {
+    track('progress_refreshed', { learnerId, source });
+    refetch();
+  };
+
   return (
     <main className="page">
       <header className="page-header">
@@ -24,7 +30,7 @@ export function App() {
           <p className="eyebrow">Docebo · pilot</p>
           <h1>My progress</h1>
         </div>
-        <button type="button" onClick={refetch} disabled={loading}>
+        <button type="button" onClick={() => refresh('refresh')} disabled={loading}>
           Refresh
         </button>
       </header>
@@ -52,7 +58,7 @@ export function App() {
       ) : error ? (
         <div className="notice" role="alert">
           <p>{error}</p>
-          <button type="button" onClick={refetch}>
+          <button type="button" onClick={() => refresh('retry')}>
             Retry
           </button>
         </div>
