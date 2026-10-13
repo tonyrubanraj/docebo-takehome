@@ -1,107 +1,70 @@
-# Take-Home Assessment: Learner Progress MVP
+# Learner Progress MVP
 
-**Expected effort:** about **2 hours** of focused work  
-**Window:** **24 hours** from when you receive this prompt — that is a deadline, not an invitation to over-build  
-**AI policy:** **On** — Cursor, Claude, Copilot, and similar tools are encouraged  
-**Stack:** TypeScript backend + **pick one primary frontend: Angular or React**
+A "My progress" page that lists a learner's in-progress courses with completion, last activity, and a **pace** flag (ahead / on track / behind a due date), so they can pick up where they left off.
+
+- **Backend:** Express + TypeScript API in [`backend/`](./backend/README.md)
+- **Frontend:** Vite + React + TypeScript in [`frontend-react/`](./frontend-react/README.md) (the React starter; Angular was not used)
+- **Docs:** [`PRODUCT.md`](./PRODUCT.md) (scope, extra rule, metric, assumptions) · [`AI_USAGE.md`](./AI_USAGE.md) · [`SPEC.md`](./SPEC.md) (the brief)
 
 ## Prerequisites
 
-- **Node.js 20+** and **npm** (`node -v` — Node 18 will not run the Angular starter)
-- **Git** if you submit a repository (preferred)
-- **Ports 3001** (API) and **5173** (UI) free
-- About **2 hours** of focused time before the deadline
+- Node.js 20+ and npm
+- Ports 3001 (API) and 5173 (UI) free
 
-You do not need Docker, a cloud account, or access to Docebo.
+## Run it (4 commands, two terminals)
 
-## What we're evaluating
+```bash
+# Terminal 1: API on http://localhost:3001
+cd backend && npm install && npm run dev
 
-We care about **product judgment**, **full-stack craft**, and **how you use AI as a multiplier**. Angular and React are both first-class. We do not score which of those two you used.
+# Terminal 2: UI on http://localhost:5173
+cd frontend-react && npm install && npm run dev
+```
 
-You'll walk us through your submission in a live evaluation session with AI off. Build something you can **explain, demo, and adapt on the spot**.
+Open http://localhost:5173.
 
-A working thin slice beats a polished half-feature.
+## Demo
 
-## Getting started
+Use the **Learner** picker at the top of the page. Each option shows a different case:
 
-1. Read [`SPEC.md`](./SPEC.md).
-2. Backend:
-   ```bash
-   cd backend && npm install && npm test && npm run dev
-   ```
-   Implement `src/services/progressService.ts` until tests pass.
-3. **Pick one frontend** (already talks to the API):
+| Option | What you see |
+|--------|--------------|
+| Learner 1: mixed progress | 3 courses: one **On track** with a due date, one with no due date (no pace badge), one **Behind** and **Inactive** |
+| Learner 2: ahead of pace | 1 course marked **Ahead** |
+| Learner 3: nothing in progress | Empty state |
+| Learner 999: unknown learner | Error state: "Learner 999 not found" with Retry |
+| Learner abc: invalid ID | Error state: "Invalid learner ID: abc" with Retry |
 
-   **Angular** (Docebo production stack):
-   ```bash
-   cd frontend-angular && npm install && npm run dev
-   ```
+Also try:
 
-   **React** (Toronto market default):
-   ```bash
-   cd frontend-react && npm install && npm run dev
-   ```
+- **Refresh** (top right) re-fetches the list.
+- **Stop the API** and click Refresh to see "Can't reach the progress service. Is the backend running?"
+- **Analytics:** open the browser console to see `[analytics]` JSON lines for `course_progress_viewed` and `progress_refreshed`.
+- **Feature flag:** start the UI with `VITE_FLAG_PACE=false npm run dev` to hide the pace badge.
 
-   Open http://localhost:5173. Extend that starter — do not scaffold a third app.
-4. Copy [`PRODUCT.template.md`](./PRODUCT.template.md) → `PRODUCT.md` and [`AI_USAGE.template.md`](./AI_USAGE.template.md) → `AI_USAGE.md` in the repo root and fill them in as you work.
-5. Submit before your deadline.
+## Tests
 
-## Required deliverables
+```bash
+cd backend && npm test   # 31 Jest + supertest tests
+```
 
-| Deliverable | Purpose |
-|-------------|---------|
-| **Backend** | Starter in [`backend/`](./backend/README.md) — service logic, validation, **one extra business rule** beyond the tests |
-| **Frontend** | **One** of [`frontend-angular/`](./frontend-angular/README.md) or [`frontend-react/`](./frontend-react/README.md) — loading, error, and empty states; demoable without reading source |
-| **README** | How to run locally in under 5 commands |
-| **PRODUCT.md** | User problem, MVP scope, cuts, success metric, assumptions |
-| **AI_USAGE.md** | How you used AI; what you accepted, rejected, or changed |
+The frontend has no test runner; `npm run build` in `frontend-react/` is the typecheck.
 
-## What we are *not* asking for
+## Project layout
 
-- Docker, Kubernetes, or cloud deployment
-- CI/CD pipelines (bonus if present, not required)
-- Both frontends, or a new app from scratch
-- Pixel-perfect UI
-- Production-grade auth (a stub is fine — document it in `PRODUCT.md`)
+```
+.
+├── backend/          Express API, in-memory seed data, Jest tests
+├── frontend-react/   React UI (the one frontend used)
+├── README.md         This file: how to run and demo
+├── PRODUCT.md        Product notes
+├── AI_USAGE.md       How AI was used
+├── CLAUDE.md         Project rules and architecture notes for the AI coding assistant
+└── SPEC.md           Take-home brief
+```
 
-## AI usage
+## Known limitations
 
-Use AI freely during the take-home. We **will** ask about it in the evaluation:
-
-- What did AI generate vs. what you wrote or rewrite?
-- What did you reject and why?
-- Can you explain and modify every part of your submission without AI?
-
-Copy-paste submissions you can't explain are a red flag.
-
-## Submission
-
-Send **one** of the following before your deadline:
-
-1. **Git repository link** (GitHub, GitLab, etc.) — preferred  
-2. **Zip archive** of your project (exclude `node_modules`, vendor dirs, and build artifacts)
-
-Include in your submission email:
-
-- Link or attachment
-- Frontend starter used (**Angular** or **React**)
-- Approximate time spent
-- Any known limitations or things you'd do with more time
-
-## After submission
-
-We'll schedule a **45 minute evaluation interview** where you:
-
-- Demo your MVP and explain your architecture
-- Discuss product scope and tradeoffs
-- Make a small live change to your code (AI off)
-
-## Questions?
-
-If something in the spec is genuinely blocking, email your recruiter with:
-
-- What you're stuck on
-- What you've already assumed
-- A proposed resolution
-
-We won't answer implementation trivia, but we will clarify product intent if the spec is ambiguous in a way that blocks progress.
+- **Auth is a stub.** The UI sends the picked ID as `x-authenticated-learner-id`; the API does not yet check it against the URL (see `PRODUCT.md`).
+- **Data is in-memory seed data.** Dates are relative to server start, so the demo always looks the same.
+- **No frontend automated tests or CI.** The UI was checked manually in the browser.
