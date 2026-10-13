@@ -19,6 +19,8 @@ npm run dev
 
 Open the URL Vite prints (http://localhost:5173).
 
+Run with `VITE_FLAG_PACE=false npm run dev` to hide the pace badge.
+
 ## What you will notice
 
 The starter is intentionally thin:

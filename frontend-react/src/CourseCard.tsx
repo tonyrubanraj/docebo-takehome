@@ -1,3 +1,4 @@
+import { FLAGS } from './flags';
 import type { CourseProgress, Pace } from './types';
 
 const PACE_LABELS: Record<Exclude<Pace, 'no_target'>, string> = {
@@ -24,6 +25,7 @@ const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
 
 export function CourseCard({ course }: { course: CourseProgress }) {
   const { title, completionPercentage, lastActivityAt, isStale, pace, dueAt } = course;
+  const showPace = FLAGS.paceBadge && pace !== 'no_target';
 
   return (
     <article className="course">
@@ -55,9 +57,9 @@ export function CourseCard({ course }: { course: CourseProgress }) {
           </>
         ) : null}
       </p>
-      {pace !== 'no_target' || isStale ? (
+      {showPace || isStale ? (
         <div className="badges">
-          {pace !== 'no_target' ? (
+          {showPace ? (
             <span className={`badge badge-pace-${pace}`}>{PACE_LABELS[pace]}</span>
           ) : null}
           {isStale ? <span className="badge">Inactive</span> : null}
