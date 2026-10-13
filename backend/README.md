@@ -1,15 +1,17 @@
-# Backend — TypeScript starter
+# Backend — TypeScript API
 
-Express + TypeScript API scaffold for the Learner Progress take-home. **Implement the business logic** in `src/services/progressService.ts` until tests pass, then extend **one** sibling starter: [`frontend-angular/`](../frontend-angular/README.md) or [`frontend-react/`](../frontend-react/README.md).
+Express + TypeScript API for the Learner Progress MVP. It serves a learner's in-progress courses with completion, last activity, a stale flag, and a pace flag. The UI lives in [`frontend-react/`](../frontend-react/README.md).
 
 ## Quick start
 
 ```bash
 cd backend
 npm install
-npm test          # several tests fail until you implement progressService
+npm test          # 31 tests, all passing
 npm run dev       # http://localhost:3001
 ```
+
+Other scripts: `npm run build` (compile to `dist/`), `npm run test:watch`.
 
 ## API
 
@@ -19,7 +21,7 @@ Returns `{ "status": "ok" }`.
 
 ### `GET /api/learners/:learnerId/progress`
 
-Returns in-progress courses for a learner.
+Returns in-progress courses for a learner, most recent activity first.
 
 **Success (200):**
 
@@ -51,59 +53,65 @@ Returns in-progress courses for a learner.
 }
 ```
 
-`dueAt` is `null` when the course has no due date. `pace` compares completion with the share of time elapsed between enrolment and `dueAt`: `ahead` or `behind` when more than 15 points off, otherwise `on_track`; `behind` once past due; `no_target` when there is no due date or it is not after enrolment.
+| Field | Meaning |
+|-------|---------|
+| `completionPercentage` | Completed lessons ÷ total lessons, rounded, 0–100 |
+| `lastActivityAt` | ISO-8601 UTC timestamp of the learner's last activity |
+| `isStale` | `true` when last activity is more than 30 days ago |
+| `dueAt` | ISO-8601 UTC due date, or `null` when the course has none |
+| `pace` | `ahead`, `on_track`, `behind` or `no_target` (see below) |
 
-**Errors:**
+**Pace rule.** Expected progress is the share of time elapsed between enrolment and `dueAt`. A course is `ahead` or `behind` when completion is more than 15 points above or below that, otherwise `on_track`. It is `behind` once past due, and `no_target` when there is no due date or the due date is not after enrolment.
+
+A learner who exists but has nothing in progress gets `200` with `"courses": []`.
+
+**Errors** (always `{ "error": "<message>" }`):
 
 | Status | When |
 |--------|------|
 | 400 | Invalid learner ID: not a positive integer in plain digits (no leading zeros, decimals, exponents, hex or whitespace) or above `Number.MAX_SAFE_INTEGER` |
 | 404 | Unknown learner (not in seed data) |
+| 404 | Unknown route, including an empty learner ID (`/api/learners//progress`) |
 
-## Your task
+## Implementation
 
-Edit **`src/services/progressService.ts`** — the starter intentionally returns incomplete results (includes completed/not-started courses, missing stale flags, wrong sort).
+- `src/routes/progressRoutes.ts` validates the learner ID and calls the service.
+- `src/services/progressService.ts` filters to `in_progress`, computes completion, `isStale` and `pace`, and sorts by `lastActivityAt` descending. `computePace` is a pure function; the current time is passed in so tests control it.
+- `src/data/seed.ts` is the in-memory store.
+- The `x-authenticated-learner-id` header is read into `req.authenticatedLearnerId` but not yet enforced; the commented `ForbiddenError` check in the route shows where it would go.
 
-Tests in `tests/progress.api.test.ts` define the contract. Run `npm test` until green.
+## Tests
 
-You may also:
-
-- Extend routes (filters, query params)
-- Add persistence beyond the in-memory seed
-- Improve error shapes or add logging
-
-Document non-obvious choices in your repo-root `PRODUCT.md`.
+| File | Covers |
+|------|--------|
+| `tests/progress.api.test.ts` | The starter contract (unchanged): filtering, fields, stale flag, sort, 400 and 404 |
+| `tests/progress.extra.test.ts` | Strict ID validation, learner 3 empty list, `pace` and `dueAt` in the response |
+| `tests/pace.test.ts` | `computePace` rules and boundaries with fixed dates |
 
 ## Seed data
 
-`src/data/seed.ts` includes:
+`src/data/seed.ts` sets every date relative to server start (`daysAgo` / `daysFromNow`), so the demo looks the same whenever it runs.
 
-- **Learner 1** — 3 in-progress, 1 completed, 1 not started (API should return 3)
-- **Learner 2** — 1 in-progress, 1 completed (API should return 1)
-- **Learner 999** — does not exist (404)
+- **Learner 1:** 3 in-progress (onboarding `on_track`, leadership `no_target`, compliance `behind` and stale), 1 completed, 1 not started. The API returns 3.
+- **Learner 2:** 1 in-progress (safety `ahead`), 1 completed. The API returns 1.
+- **Learner 3:** only a completed course. The API returns 200 with an empty list.
+- **Learner 999:** does not exist (404).
 
 ## CORS
 
 Enabled for all origins so any local frontend dev server can call the API during development.
 
-## Suggested repo layout
+## Repo layout
+
+See the [project layout in the root README](../README.md#project-layout).
+
+## Frontend integration
+
+The React app proxies `/api` to `http://localhost:3001`. It fetches:
 
 ```
-your-submission/
-├── backend/          ← this starter (TypeScript)
-├── frontend-angular/ ← Angular starter (primary)
-├── frontend-react/   ← React starter (primary)
-├── README.md         ← how to run both
-├── PRODUCT.md
-└── AI_USAGE.md
+GET /api/learners/:learnerId/progress
+x-authenticated-learner-id: <learnerId>
 ```
 
-## Frontend integration hint
-
-The Angular and React starters proxy `/api` to `http://localhost:3001`. Fetch:
-
-```
-GET /api/learners/1/progress
-```
-
-Learner 1 is a good default for demos; learner 2 shows a single-course case; learner 999 triggers an error state in your UI.
+Learner 1 is the default demo; learner 2 shows a course ahead of pace; learner 3 shows the empty state; learner 999 and `abc` show error states.
