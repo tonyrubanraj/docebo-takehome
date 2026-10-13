@@ -83,6 +83,7 @@ Learners enrolled in several courses at once lose track of where they left off. 
 
 ## What I'd build next
 
-- **Make the learner picker labels follow the pace flag**, so no pace details show when it's off.
-- **Behind-first ordering and a pace filter in the UI.** Add a `course_selected` event to see which courses learners open.
-- **Holdout experiment:** add a page-level flag with a holdout group, so the 7-day resume rate can be measured as defined.
+- **Run the experiment:** a page-level flag with a holdout group, plus a `course_selected` event, so the 7-day resume rate can be measured as defined.
+- **Real data:** read `enrolledAt`, `dueAt` and lesson activity from the LMS, so the experiment runs on real learners.
+- **Make Behind actionable:** sort Behind courses first and show what it takes to catch up (e.g. "2 lessons a week to finish on time").
+- **A pace filter in the UI,** once we know learners act on the badge.
