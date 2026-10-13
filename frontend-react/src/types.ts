@@ -1,3 +1,5 @@
+export type Pace = 'ahead' | 'on_track' | 'behind' | 'no_target';
+
 export type CourseProgress = {
   courseId: string;
   title: string;
@@ -5,6 +7,8 @@ export type CourseProgress = {
   lastActivityAt: string;
   status: string;
   isStale?: boolean;
+  dueAt: string | null;
+  pace: Pace;
 };
 
 export type LearnerProgressResponse = {

@@ -1,9 +1,14 @@
 import { enrollments, knownLearnerIds } from '../data/seed';
 import { NotFoundError } from '../errors';
-import type { CourseEnrollment, CourseProgress } from '../types';
+import type { CourseEnrollment, CourseProgress, Pace } from '../types';
+
+export type { Pace };
 
 /** Days without activity before a course is considered stale (business rule hint). */
 export const STALE_DAYS = 30;
+
+/** Percentage points completion may drift from expected before a course is ahead/behind. */
+export const PACE_TOLERANCE_POINTS = 15;
 
 /**
  * Return in-progress courses for a learner, sorted by last activity (most recent first).
@@ -36,13 +41,35 @@ export function isEnrollmentStale(lastActivityAt: string, now: Date = new Date()
   return diffDays > STALE_DAYS;
 }
 
+/** Compare completion with the share of the enrolledAt → dueAt window that has elapsed. */
+export function computePace(
+  enrolledAt: string,
+  dueAt: string | undefined,
+  completionPct: number,
+  now: Date,
+): Pace {
+  if (dueAt === undefined) return 'no_target';
+  const start = Date.parse(enrolledAt);
+  const end = Date.parse(dueAt);
+  if (end <= start) return 'no_target';
+  if (now.getTime() >= end) return 'behind';
+  const elapsed = Math.min(Math.max((now.getTime() - start) / (end - start), 0), 1);
+  const expected = elapsed * 100;
+  if (completionPct < expected - PACE_TOLERANCE_POINTS) return 'behind';
+  if (completionPct > expected + PACE_TOLERANCE_POINTS) return 'ahead';
+  return 'on_track';
+}
+
 function toCourseProgress(enrollment: CourseEnrollment, now: Date): CourseProgress {
+  const completionPercentage = computeCompletionPercentage(enrollment);
   return {
     courseId: enrollment.courseId,
     title: enrollment.title,
-    completionPercentage: computeCompletionPercentage(enrollment),
+    completionPercentage,
     lastActivityAt: enrollment.lastActivityAt,
     status: 'in_progress',
     isStale: isEnrollmentStale(enrollment.lastActivityAt, now),
+    dueAt: enrollment.dueAt ?? null,
+    pace: computePace(enrollment.enrolledAt, enrollment.dueAt, completionPercentage, now),
   };
 }

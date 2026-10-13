@@ -22,6 +22,9 @@ export interface CourseEnrollment {
   dueAt?: string;
 }
 
+/** How completion compares with elapsed time between enrolledAt and dueAt. */
+export type Pace = 'ahead' | 'on_track' | 'behind' | 'no_target';
+
 /** API response shape for a single in-progress course. */
 export interface CourseProgress {
   courseId: string;
@@ -31,6 +34,9 @@ export interface CourseProgress {
   status: 'in_progress';
   /** Set when last activity is older than the stale threshold (see progressService). */
   isStale?: boolean;
+  /** ISO-8601 UTC due date, or null when the course has none. */
+  dueAt: string | null;
+  pace: Pace;
 }
 
 export interface LearnerProgressResponse {

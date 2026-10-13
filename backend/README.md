@@ -33,11 +33,25 @@ Returns in-progress courses for a learner.
       "completionPercentage": 33,
       "lastActivityAt": "2026-08-22T09:15:00.000Z",
       "status": "in_progress",
-      "isStale": false
+      "isStale": false,
+      "dueAt": null,
+      "pace": "no_target"
+    },
+    {
+      "courseId": "course-onboarding",
+      "title": "New Hire Onboarding",
+      "completionPercentage": 50,
+      "lastActivityAt": "2026-08-20T09:15:00.000Z",
+      "status": "in_progress",
+      "isStale": false,
+      "dueAt": "2026-09-13T09:15:00.000Z",
+      "pace": "on_track"
     }
   ]
 }
 ```
+
+`dueAt` is `null` when the course has no due date. `pace` compares completion with the share of time elapsed between enrolment and `dueAt`: `ahead` or `behind` when more than 15 points off, otherwise `on_track`; `behind` once past due; `no_target` when there is no due date or it is not after enrolment.
 
 **Errors:**
 
